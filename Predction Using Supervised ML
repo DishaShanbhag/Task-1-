@@ -1,0 +1,50 @@
+#Importing Models
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split  
+from sklearn.linear_model import LinearRegression 
+from sklearn import metrics 
+import array as array
+%matplotlib inline
+#Reading the data
+url = "http://bit.ly/w-data"
+data = pd.read_csv(url)
+print("Data imported sucessfully")
+data.head(10)
+#Plotting the data
+data.plot(x="Hours", y ="Scores", color = 'g', style = 'o')
+plt.title('Hours vs Percentage')  
+plt.xlabel('Hours Studied')  
+plt.ylabel('Percentage Score') 
+plt.show()
+X = data.iloc[:, :-1].values  
+y = data.iloc[:, 1].values 
+X_train,X_test,y_train,y_test = train_test_split(X,y, test_size = 0.2, random_state =0)
+reg = LinearRegression()
+reg.fit(X_train,y_train)
+print("Training Complete")
+#plotting regression line
+line = reg.coef_*X+reg.intercept_
+#plotting for the test data
+plt.scatter(X,y)
+plt.plot(X,line)
+plt.show()
+print(X_test)
+#to predict the model
+y_pred = reg.predict(X_test)
+y_pred
+df = pd.DataFrame({'Actual': y_test, 'predict': y_pred})
+df
+#Testing our own data
+hours = 9.25
+test = np.array([hours])
+test = test.reshape(-1,1)
+own_pred=reg.predict(test)
+print("no of hours =  {}".format(hours))
+print("predicted score = {}".format(own_pred))
+#Evaluating the model
+print('Mean absolute error:',metrics.mean_absolute_error(y_test,y_pred))  
+print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
+print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
+print('R-2:', metrics.r2_score(y_test, y_pred))
